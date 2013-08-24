@@ -6,13 +6,39 @@ function GitHub(user, token)
 
 GitHub.getUserToken = function(user, password, successCallback, errorCallback)
 {
-	$.ajax("https://api.github.com/authorizations", 
+	// First get auths and check whether tealight already has one.
+	$.ajax("https://api.github.com/authorizations",
 		{headers: {"Authorization": "Basic "+btoa(user+":"+password)},
-		 type: "POST",
-		 data: JSON.stringify({scopes: ['repo'],
-		                       note: "Tealight"})})
-		.success(successCallback)
-		.error(errorCallback);
+		 type: "GET"})
+		 
+	.success(function(auths)
+	{
+		for(var a in auths)
+		{
+			console.log(auths[a]);
+			if (auths[a].note == "tealight")
+			{
+				console.log("Found existing tealight auth token. Reusing.");
+				if (successCallback)
+					successCallback(auths[a]);
+				return;
+			}
+		}
+		
+		console.warn("No existing tealight auth token found. Creating.");
+		
+		$.ajax("https://api.github.com/authorizations", 
+			{headers: {"Authorization": "Basic "+btoa(user+":"+password)},
+			 type: "POST",
+			 data: JSON.stringify({scopes: ['repo'],
+								   note: "tealight"})})
+			.success(successCallback)
+			.error(errorCallback);
+		
+	})
+	.error(errorCallback);
+		 
+	
 }
 
 GitHub.prototype.getRepo = function(name, successCallback, errorCallback)
@@ -39,7 +65,8 @@ GitHub.prototype.createRepo = function(name, successCallback, errorCallback)
 		 })}).success(function(r)
 			 {
 				console.log("Repository \"\" created successfully.");
-				successCallback(r);
+				if (successCallback)
+					successCallback(r);
 			 })
 		     .error(errorCallback);
 }
@@ -69,7 +96,8 @@ GitHub.prototype.createFile = function(repo, path, successCallback, errorCallbac
 		.success(function(f)
 		{
 			console.log("Successfully created \"" + path + "\" in repo \"" + repo + "\".");
-			successCallback(f);
+			if (successCallback)
+				successCallback(f);
 		})
 		.error(errorCallback);
 }
@@ -103,6 +131,7 @@ GitHub.prototype.listFiles = function(repo, directory, successCallback, errorCal
 {
 	this.getFile(repo, directory, successCallback, errorCallback);
 }
+
 
 
 
