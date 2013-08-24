@@ -3,7 +3,25 @@ var github = null;
 $(function()
 {
 	// Document ready
+	
+	
 	ensureGithubAvailable();
+	
+	$("body").on("click", ".github-signin", function(e)
+	{
+		var btn = e.target;
+		var username = $(e.target).closest("form").find("input[type='text']")[0].value;
+		var password = $(e.target).closest("form").find("input[type='password']")[0].value;
+		e.preventDefault();
+		
+		githubTokenToCookie(username, password, function()
+		{
+			github = githubFromCookie();
+			console.log("Logged in to Github as \"" + username + "\"");
+		}, ajaxError)
+		
+		return false;
+	});
 });
 
 function ensureGithubAvailable()

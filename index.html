@@ -39,8 +39,9 @@
 			<div class="navbar-collapse collapse">
 			  <ul class="nav navbar-nav">
 				<li class="active"><a href="#">Home</a></li>
-				<li><a href="#about">About</a></li>
-				<li><a href="#contact">Contact</a></li>
+				<li><a href="#about">Logo</a></li>
+				<li><a href="#contact">Robot</a></li>
+				<li><a href="#contact">Art</a></li>
 				<li class="dropdown">
 				  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
 				  <ul class="dropdown-menu">
@@ -56,12 +57,12 @@
 			  </ul>
 			  <form class="navbar-form navbar-right">
 				<div class="form-group">
-				  <input type="text" placeholder="Email" class="form-control">
+				  <input type="text" placeholder="Github Username" class="form-control">
 				</div>
 				<div class="form-group">
-				  <input type="password" placeholder="Password" class="form-control">
+				  <input type="password" placeholder="Github Password" class="form-control">
 				</div>
-				<button type="submit" class="btn btn-success">Sign in</button>
+				<button type="submit" class="btn btn-success github-signin">Sign in</button>
 			  </form>
 			</div><!--/.navbar-collapse -->
 		  </div>
@@ -111,45 +112,31 @@
 	<!-- Modal -->
   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
+			<form class="form-horizontal" role="form">
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title">Login to Github</h4>
         </div>
         <div class="modal-body">
-			<form class="form-horizontal" role="form">
 			  <div class="form-group">
-				<label for="inputEmail1" class="col-lg-2 control-label">Email</label>
-				<div class="col-lg-10">
-				  <input type="email" class="form-control" id="inputEmail1" placeholder="Email">
+				<label for="inputEmail1" class="col-lg-4 control-label">Github Username</label>
+				<div class="col-lg-8">
+				  <input type="text" class="form-control" id="inputEmail1" placeholder="Username">
 				</div>
 			  </div>
 			  <div class="form-group">
-				<label for="inputPassword1" class="col-lg-2 control-label">Password</label>
-				<div class="col-lg-10">
+				<label for="inputPassword1" class="col-lg-4 control-label">Github Password</label>
+				<div class="col-lg-8">
 				  <input type="password" class="form-control" id="inputPassword1" placeholder="Password">
 				</div>
 			  </div>
-			  <div class="form-group">
-				<div class="col-lg-offset-2 col-lg-10">
-				  <div class="checkbox">
-					<label>
-					  <input type="checkbox"> Remember me
-					</label>
-				  </div>
-				</div>
-			  </div>
-			  <div class="form-group">
-				<div class="col-lg-offset-2 col-lg-10">
-				  <button type="submit" class="btn btn-default">Sign in</button>
-				</div>
-			  </div>
-			</form>
 		</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Login</button>
+          <button type="button" class="btn btn-primary github-signin" data-dismiss="modal">Login</button>
         </div>
       </div><!-- /.modal-content -->
+			</form>
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 

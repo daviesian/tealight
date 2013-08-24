@@ -15,7 +15,6 @@ GitHub.getUserToken = function(user, password, successCallback, errorCallback)
 	{
 		for(var a in auths)
 		{
-			console.log(auths[a]);
 			if (auths[a].note == "tealight")
 			{
 				console.log("Found existing tealight auth token. Reusing.");
