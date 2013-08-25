@@ -23,6 +23,27 @@
   </head>
 
   <body>
+    <script type="text/javascript">
+    var python_worker = null;
+
+    function runit() {
+        if (python_worker) {
+            python_worker.terminate();
+        }
+        python_worker = new Worker("js/run_python.js");
+
+        document.getElementById("output").innerHTML = "";
+        python_worker.addEventListener("message", function(event) {
+            if (event.data.type === "stdout")
+                document.getElementById("output").innerHTML += event.data.message;
+            if (event.data.type === "done")
+                document.getElementById("output").innerHTML += "Done!";
+        });
+
+        python_worker.postMessage(document.getElementById("code").value);
+    }
+    
+    </script>
 
     <div id="wrap">
 	
@@ -78,13 +99,22 @@
 		</div>
 
 		<div class="container">
+
+
 		  <!-- Example row of columns -->
 		  <div class="row">
 			<div class="col-lg-4">
-			  <h2>Heading</h2>
-			  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-			  <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
-			</div>
+			  <h2>Code</h2>
+              <textarea id="code" rows="10" cols="40">
+i = 0
+while i &lt; 1000000:
+    if i % 10000 == 0:
+        print "Hello World %d" % i
+    i = i+1
+              </textarea></br>
+              <button type="button" onclick="runit()">Run</button></br>
+              <pre id="output"></pre>
+          </div>
 			<div class="col-lg-4">
 			  <h2>Heading</h2>
 			  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
