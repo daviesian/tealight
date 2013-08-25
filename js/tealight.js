@@ -16,8 +16,8 @@ $(function()
 	codeMirror = CodeMirror($("#code-editor")[0],
 	{
 		mode: "python",
-		lineNumbers: true
-		
+		lineNumbers: true,
+		theme: "solarized dark"
 	});
 	
 });
