@@ -11,9 +11,14 @@
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	
+	<!-- Deault CodeMirror style -->
+	<link rel="stylesheet" href="css/codemirror/codemirror.css">
+	<link rel="stylesheet" href="css/codemirror/theme/solarized.css">
 
     <!-- Custom styles for this template -->
     <link href="css/tealight.css" rel="stylesheet">
+
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -130,13 +135,15 @@
 					 
 					<span class="lead mode-title"></span>
 				  </div>
+				  <div id="code-editor"></div>
+				  <!--
 				  <textarea id="code-editor" rows="10" cols="40">
 i = 0
 while i &lt; 200000:
 	if i % 10000 == 0:
 		print "Hello World %d" % i
 	i = i+1
-				  </textarea>
+				  </textarea>-->
 				  <div id="code-buttons">
 					  <button id="run-code" class="btn btn-success" type="button">Run</button>
 					  <button id="stop-code" class="btn btn-danger" type="button" disabled>Stop</button>
@@ -231,6 +238,8 @@ while i &lt; 200000:
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="js/bootstrap/bootstrap.js"></script>
+	<script src="js/codemirror/codemirror.js"></script>
+	<script src="js/codemirror/modes/python.js"></script>
 	<script src="js/github.js"></script>
 	<script src="js/tealight.js"></script>
   </body>

@@ -45,6 +45,7 @@ body {
 	top: 50px;
 	bottom: 50px;
 	width: 100%;
+	background: pink;
 }
 #code-panel {
 	position: fixed;
@@ -90,4 +91,8 @@ body {
 	margin-bottom: 0px;
 	overflow: auto;
 	margin-left: 15px;
+}
+
+.CodeMirror {
+	height: 100%;
 }

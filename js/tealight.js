@@ -1,6 +1,7 @@
 ﻿var github = null;
 var python_worker = null;
 var currentFile = null;
+var codeMirror = null;
 
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -11,6 +12,13 @@ $(function()
 	
 	
 	ensureGithubAvailable();
+	
+	codeMirror = CodeMirror($("#code-editor")[0],
+	{
+		mode: "python",
+		lineNumbers: true
+		
+	});
 	
 });
 
@@ -353,10 +361,10 @@ function loadFile(path)
 	
 	github.getFile("tealight-files", path, function(newFile)
 	{
-		newFile.plainContent = atob(newFile.content.replace(/\s/g, ''));
+		newFile.plainContent = atob(newFile.content.replace(/\s/g, ''));// content has a newline at the end!
 		currentFile = newFile;
 		console.log("Successfully loaded", path);
-		$("#code-editor").val(newFile.plainContent); // content has a newline at the end!
+		codeMirror.setValue(newFile.plainContent);
 		$("body").trigger("file-loaded");
 	},
 	function(e)
@@ -374,14 +382,15 @@ function save(message)
 		
 	if (currentFile)
 	{
-		if (currentFile.plainContent != $("#code-editor").val())
+		var currentContent = codeMirror.getValue()
+		if (currentFile.plainContent != currentContent)
 		{
 			console.log("Content has changed. Saving", currentFile.path, ".");
-			github.commitChange(currentFile, $("#code-editor").val(), message, function(f)
+			github.commitChange(currentFile, currentContent, message, function(f)
 			{
 				console.log("Got back",f,"from commit");
 				currentFile.sha = f.content.sha;
-				currentFile.plainContent = $("#code-editor").val();
+				currentFile.plainContent = currentContent;
 			}, ajaxError);
 		}
 		else
@@ -419,6 +428,6 @@ function runCode() {
 		$("#code-output").scrollTop($("#code-output")[0].scrollHeight);
 	});
 
-	python_worker.postMessage($("#code-editor")[0].value);
+	python_worker.postMessage(codeMirror.getValue());
 	$("body").trigger("code-started");
 }
