@@ -347,7 +347,7 @@ function loadFile(path)
 	
 	if (currentFile)
 	{
-		save();
+		save("Closing " + currentFile.path);
 	}
 	
 	
@@ -355,9 +355,8 @@ function loadFile(path)
 	{
 		newFile.plainContent = atob(newFile.content.replace(/\s/g, ''));
 		currentFile = newFile;
-		console.log("Successfully loaded", path, newFile);
+		console.log("Successfully loaded", path);
 		$("#code-editor").val(newFile.plainContent); // content has a newline at the end!
-		console.log("Successfully loaded", path, "into editor");
 		$("body").trigger("file-loaded");
 	},
 	function(e)
@@ -368,17 +367,21 @@ function loadFile(path)
 	
 }
 
-function save()
+function save(message)
 {
+	if (!message)
+		message = "Update " + currentFile.path;
+		
 	if (currentFile)
 	{
 		if (currentFile.plainContent != $("#code-editor").val())
 		{
 			console.log("Content has changed. Saving", currentFile.path, ".");
-			github.commitChange(currentFile, $("#code-editor").val(), function(f)
+			github.commitChange(currentFile, $("#code-editor").val(), message, function(f)
 			{
 				console.log("Got back",f,"from commit");
 				currentFile.sha = f.content.sha;
+				currentFile.plainContent = $("#code-editor").val();
 			}, ajaxError);
 		}
 		else
@@ -401,6 +404,8 @@ function runCode() {
 	stopCode();
 	python_worker = new Worker("js/run_python.js");
 
+	save("Running " + currentFile.path);
+	
 	$("#code-output").html("");
 	python_worker.addEventListener("message", function(event) {
 		if (event.data.type === "stdout")

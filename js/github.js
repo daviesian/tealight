@@ -149,14 +149,14 @@ GitHub.prototype.listFiles = function(repo, directory, successCallback, errorCal
 	this.getFile(repo, directory, successCallback, errorCallback);
 }
 
-GitHub.prototype.commitChange = function(originalFile, newContent, successCallback, errorCallback)
+GitHub.prototype.commitChange = function(originalFile, newContent, message, successCallback, errorCallback)
 {
 	$.ajax(originalFile.url, 
 		{headers: {"Authorization": "token " + this.token},
 		 type: "PUT",
 		 data: JSON.stringify(
 		 {
-			message: "Update " + originalFile.path,
+			message: message,
 			content: btoa(newContent),
 			sha: originalFile.sha
 		 })
