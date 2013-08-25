@@ -23,27 +23,6 @@
   </head>
 
   <body>
-    <script type="text/javascript">
-    var python_worker = null;
-
-    function runit() {
-        if (python_worker) {
-            python_worker.terminate();
-        }
-        python_worker = new Worker("js/run_python.js");
-
-        document.getElementById("output").innerHTML = "";
-        python_worker.addEventListener("message", function(event) {
-            if (event.data.type === "stdout")
-                document.getElementById("output").innerHTML += event.data.message;
-            if (event.data.type === "done")
-                document.getElementById("output").innerHTML += "Done!";
-        });
-
-        python_worker.postMessage(document.getElementById("code").value);
-    }
-    
-    </script>
 
     <div id="wrap">
 	
@@ -76,7 +55,8 @@
 				  </ul>
 				</li>
 			  </ul>
-			  <form class="navbar-form navbar-right">
+			  
+			  <form id="header-github-login" class="navbar-form navbar-right">
 				<div class="form-group">
 				  <input type="text" placeholder="Github Username" class="form-control">
 				</div>
@@ -85,6 +65,12 @@
 				</div>
 				<button type="submit" class="btn btn-success github-signin">Sign in</button>
 			  </form>
+			  <div id="header-github-user" class="navbar-right">
+				  <p class="navbar-text">
+					Logged in as <span class="current-github-user"></span> 
+				  </p>
+			      <button type="button" class="btn btn-danger navbar-btn navbar-right logout-button">Logout</button>
+			  </div>
 			</div><!--/.navbar-collapse -->
 		  </div>
 		</div>
@@ -134,7 +120,7 @@ while i &lt; 1000000:
 	
     <div id="footer">
       <div class="container">
-        <p class="text-muted credit">&copy 2013 <a href="http://github.com/LeszekSwirski">Leszek Świrski</a> and <a href="http://github.com/daviesian">Ian Davies</a>.</p>
+        <p class="text-muted credit">Tealight &copy 2013 <a href="http://github.com/LeszekSwirski">Leszek Świrski</a> and <a href="http://github.com/daviesian">Ian Davies</a>.</p>
       </div>
     </div>
 	
@@ -170,6 +156,25 @@ while i &lt; 1000000:
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 
+  
+	<!-- Modal Error -->
+  <div class="modal fade" id="modal-error" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+			<form class="form-horizontal" role="form">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Error</h4>
+        </div>
+        <div class="modal-body">
+			An error occurred.
+		</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">OK</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

@@ -4,31 +4,38 @@ body {
   /* The html and body elements cannot have any padding or margin. */
 }
 
-/* Wrapper for page content to push down footer */
+/* Wrapper for page content */
 #wrap {
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
-  /* Negative indent footer by its height */
-  margin: 0 auto -60px;
-  /* Pad bottom by footer height */
-  padding: 50px 0 60px;
+  position: fixed;
+  top: 50px;
+  bottom: 40px;
+  left: 0px;
+  right: 0px;
+  overflow: hidden;
 }
 
 /* Set the fixed height of the footer here */
 #footer {
-  height: 60px;
+  height: 40px;
   background-color: #f5f5f5;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
 }
 
 #wrap > .container {
   padding: 60px 15px 0;
 }
 .container .credit {
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 #footer > .container {
   padding-left: 15px;
   padding-right: 15px;
+}
+
+#header-github-user {
+	display: none;
 }

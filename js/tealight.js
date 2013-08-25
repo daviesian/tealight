@@ -1,37 +1,85 @@
 var github = null;
+var python_worker = null;
 
 $(function()
 {
 	// Document ready
 	
 	
-	ensureGithubAvailable();
+	//ensureGithubAvailable();
 	
 	$("body").on("click", ".github-signin", function(e)
 	{
 		var btn = e.target;
-		var username = $(e.target).closest("form").find("input[type='text']")[0].value;
-		var password = $(e.target).closest("form").find("input[type='password']")[0].value;
-		e.preventDefault();
+		var userField = $(btn).closest("form").find("input[type='text']")[0];
+		var passwordField = $(btn).closest("form").find("input[type='password']")[0];
+		var username = userField.value;
+		var password = passwordField.value;
+		
+		userField.value = "";
+		passwordField.value = "";
 		
 		githubTokenToCookie(username, password, function()
-		{
+		{// SUCCESS
 			github = githubFromCookie();
 			console.log("Logged in to Github as \"" + username + "\"");
-		}, ajaxError)
+			displayGithubStatus();
+		}, function(e)
+		{// FAIL
+		    console.error("Could not login to Github: ", e.responseJSON.message);
+			modalError("Login failed", e.responseJSON.message);
+		})
 		
+		e.preventDefault();
+		return false;
+	});
+	
+	$("body").on("click", ".logout-button", function(e)
+	{
+		github = null;
+		document.cookie = 'tealight-user=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+		document.cookie = 'tealight-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+		displayGithubStatus();
+		e.preventDefault();
 		return false;
 	});
 });
 
+function modalError(title, message)
+{
+	$('#modal-error .modal-title').html(title);
+	$('#modal-error .modal-body').html(message);
+	$('#modal-error').modal("show");
+}
+
 function ensureGithubAvailable()
 {
 	github = githubFromCookie();
-	if (!github)
+	if (github)
+	{
+		displayGithubStatus();
+	}
+	else
 	{
 		doGithubLogin();
 	}
 }
+
+function displayGithubStatus()
+{
+	if(github)
+	{
+		$("#header-github-login").hide();
+		$(".current-github-user").html("<a href=\"https://github.com/" + github.user + "\">" + github.user + "</a>");
+		$("#header-github-user").show();
+	}
+	else
+	{
+		$("#header-github-user").hide();
+		$("#header-github-login").show();
+	}
+}
+
 function githubTokenToCookie(user, password, successCallback, errorCallback)
 {
 	GitHub.getUserToken(user, password, function(t) 
@@ -94,4 +142,22 @@ function doGithubLogin()
 {
 	$('#myModal').modal({show: true,
 	                     backdrop: "static"});
+}
+
+
+function runit() {
+	if (python_worker) {
+		python_worker.terminate();
+	}
+	python_worker = new Worker("js/run_python.js");
+
+	document.getElementById("output").innerHTML = "";
+	python_worker.addEventListener("message", function(event) {
+		if (event.data.type === "stdout")
+			document.getElementById("output").innerHTML += event.data.message;
+		if (event.data.type === "done")
+			document.getElementById("output").innerHTML += "Done!";
+	});
+
+	python_worker.postMessage(document.getElementById("code").value);
 }
