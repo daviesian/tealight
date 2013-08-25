@@ -2,6 +2,9 @@
 var python_worker = null;
 var currentFile = null;
 var codeMirror = null;
+var codeMode = null;
+
+var skulptModules = {};
 
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -10,6 +13,7 @@ $(function()
 {
 	// Document ready
 	
+	loadSkulptModule("./logo.js", "js/skulpt-tealight/logo.js");
 	
 	ensureGithubAvailable();
 	
@@ -66,7 +70,7 @@ $("body").on("show.bs.tab", "a[data-toggle='tab']", function(e)
 	
 	if (newTab == "#code")
 	{
-		var codeMode = $(e.target).data("tealightMode");
+		codeMode = $(e.target).data("tealightMode");
 		console.log("Code mode", codeMode);
 		$(".mode-title").html(codeMode.capitalize() + " Mode");
 		loadTealightFilesFromRepo(codeMode);
@@ -409,6 +413,14 @@ function stopCode() {
 	}
 }
 
+function loadSkulptModule(skulptPath, uri)
+{
+	$.get(uri, function(e)
+	{
+		skulptModules[skulptPath] = e;
+	});
+}
+
 function runCode() {
 	stopCode();
 	python_worker = new Worker("js/run_python.js");
@@ -416,18 +428,37 @@ function runCode() {
 	save("Running " + currentFile.path);
 	
 	$("#code-output").html("");
-	python_worker.addEventListener("message", function(event) {
-		if (event.data.type === "stdout")
-			$("#code-output").append(event.data.message);
-		if (event.data.type === "done")
+	initMode();
+	python_worker.addEventListener("message", function(event) 
+	{
+		switch (event.data.type)
 		{
-			$("#code-output").append("Done!");
-			$("body").trigger("code-finished");
+			case "stdout":
+				$("#code-output").append(event.data.message);
+				break;
+			case "done":
+				$("#code-output").append("Done!");
+				$("body").trigger("code-finished");
+				break;
+			case "eval":
+				eval(event.data.code);
+				break;
 		}
 			
 		$("#code-output").scrollTop($("#code-output")[0].scrollHeight);
 	});
-
-	python_worker.postMessage(codeMirror.getValue());
+	
+	python_worker.postMessage({type: "MODULES", modules: skulptModules});
+	python_worker.postMessage({type: "RUN", code: codeMirror.getValue()});
 	$("body").trigger("code-started");
+}
+
+function initMode()
+{
+	switch(codeMode)
+	{
+		case "logo":
+			Logo.init($('#canvas')[0]);
+			break;
+	}
 }

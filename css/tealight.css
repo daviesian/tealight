@@ -96,3 +96,21 @@ body {
 .CodeMirror {
 	height: 100%;
 }
+
+#canvas {
+	background: #eef;
+	top:0px;
+	left: 0px;
+	height: 100%;
+	width: 100%;
+}
+
+#canvasContainer {
+	background: #ffc;
+	position:fixed;
+	top:50px;
+	left: 50%;
+	right: 0px;
+	bottom: 40px;
+	margin-left: 20px;
+}

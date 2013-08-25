@@ -126,7 +126,7 @@
 		  </div>
 		  <div class="tab-pane" id="code">
 			  <!-- CODE TAB -->
-				<div class="col-lg-4">
+				<div class="col-lg-6">
 				  <div id="code-panel">
 				  <div class="btn-group" id="code-header">
 					<button class="btn btn-default pull-right dropdown-toggle" data-toggle="dropdown" type="button"><span id="current-code-file">Loading...</span> <b class="caret"></b></button>
@@ -136,14 +136,6 @@
 					<span class="lead mode-title"></span>
 				  </div>
 				  <div id="code-editor"></div>
-				  <!--
-				  <textarea id="code-editor" rows="10" cols="40">
-i = 0
-while i &lt; 200000:
-	if i % 10000 == 0:
-		print "Hello World %d" % i
-	i = i+1
-				  </textarea>-->
 				  <div id="code-buttons">
 					  <button id="run-code" class="btn btn-success" type="button">Run</button>
 					  <button id="stop-code" class="btn btn-danger" type="button" disabled>Stop</button>
@@ -151,7 +143,11 @@ while i &lt; 200000:
 				  </div>
 				  <pre id="code-output"></pre>
 			  </div>
-		  
+			<div class="col-lg-6 col-lg-offset-6">
+			  <div id="canvasContainer">			  
+				<canvas id="canvas" width="20" height="20"></canvas>
+			  </div>
+			</div>
 		  </div>
 		</div>
 		
@@ -242,5 +238,7 @@ while i &lt; 200000:
 	<script src="js/codemirror/modes/python.js"></script>
 	<script src="js/github.js"></script>
 	<script src="js/tealight.js"></script>
+	<script src="js/logo.js"></script>
+	
   </body>
 </html>
