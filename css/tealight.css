@@ -39,3 +39,41 @@ body {
 #header-github-user {
 	display: none;
 }
+
+#code-editor {
+	position: absolute;
+	top: 20px;
+	bottom: 50px;
+	width: 100%;
+}
+#code-panel {
+	position: fixed;
+	top:50px;
+	bottom: 30%;
+	left: 0px;
+	width: 50%;
+}
+
+#code-buttons {
+	position:absolute;
+	bottom: 0px;
+	height: 50px;
+	width: 100%;
+	padding-top:10px;
+	text-align: right;
+}
+
+#code-buttons button {
+	width: 100px;
+}
+
+
+#code-output {
+	position:fixed;
+	bottom: 40px;
+	top: 70%;
+	left: 0px;
+	width: 50%;
+	margin-bottom: 0px;
+	overflow: auto;
+}

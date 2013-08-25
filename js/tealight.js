@@ -8,42 +8,91 @@ $(function()
 	
 	//ensureGithubAvailable();
 	
-	$("body").on("click", ".github-signin", function(e)
-	{
-		var btn = e.target;
-		var userField = $(btn).closest("form").find("input[type='text']")[0];
-		var passwordField = $(btn).closest("form").find("input[type='password']")[0];
-		var username = userField.value;
-		var password = passwordField.value;
-		
-		userField.value = "";
-		passwordField.value = "";
-		
-		githubTokenToCookie(username, password, function()
-		{// SUCCESS
-			github = githubFromCookie();
-			console.log("Logged in to Github as \"" + username + "\"");
-			displayGithubStatus();
-		}, function(e)
-		{// FAIL
-		    console.error("Could not login to Github: ", e.responseJSON.message);
-			modalError("Login failed", e.responseJSON.message);
-		})
-		
-		e.preventDefault();
-		return false;
-	});
-	
-	$("body").on("click", ".logout-button", function(e)
-	{
-		github = null;
-		document.cookie = 'tealight-user=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-		document.cookie = 'tealight-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-		displayGithubStatus();
-		e.preventDefault();
-		return false;
-	});
 });
+
+// EVENT HANDLERS
+
+$("body").on("click", ".github-signin", function(e)
+{
+	var btn = e.target;
+	var userField = $(btn).closest("form").find("input[type='text']")[0];
+	var passwordField = $(btn).closest("form").find("input[type='password']")[0];
+	var username = userField.value;
+	var password = passwordField.value;
+	
+	userField.value = "";
+	passwordField.value = "";
+	
+	githubTokenToCookie(username, password, function()
+	{// SUCCESS
+		github = githubFromCookie();
+		console.log("Logged in to Github as \"" + username + "\"");
+		displayGithubStatus();
+	}, function(e)
+	{// FAIL
+		console.error("Could not login to Github: ", e.responseJSON.message);
+		modalError("Login failed", e.responseJSON.message);
+	})
+	
+	e.preventDefault();
+	return false;
+});
+
+$("body").on("click", ".logout-button", function(e)
+{
+	github = null;
+	document.cookie = 'tealight-user=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	document.cookie = 'tealight-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	displayGithubStatus();
+	e.preventDefault();
+	return false;
+});
+
+$("body").on("click", ".choose-tab", function(e)
+{
+	$('#navtabs a[href="#' + $(e.target).data("targetTab") + '"]').tab("show")
+});
+
+$("body").on("click", ".choose-tealight-mode", function(e)
+{
+	$('#navtabs a[data-tealight-mode="' + $(e.target).data("targetTealightMode") + '"]').tab("show")
+});
+
+$("body").on("show.bs.tab", "a[data-toggle='tab']", function(e)
+{
+	var previousTab = $(e.relatedTarget).attr("href");
+	var newTab = $(e.target).attr("href");
+	console.log("Leaving tab", previousTab, "entering tab", newTab);
+	
+	if (newTab == "#code")
+	{
+		var codeMode = $(e.target).data("tealightMode");
+		console.log("Code mode", codeMode);
+	}
+});
+
+$("body").on("click", "#run-code", function(e)
+{
+	runCode();
+});
+
+$("body").on("click", "#stop-code", function(e)
+{
+	stopCode();
+});
+
+$("body").on("code-started", function(e)
+{
+	$("#run-code").html("Restart");
+	$("#stop-code").attr("disabled", false);
+});
+
+$("body").on("code-finished", function(e)
+{
+	$("#run-code").html("Run");
+	$("#stop-code").attr("disabled", true);
+});
+
 
 function modalError(title, message)
 {
@@ -144,20 +193,31 @@ function doGithubLogin()
 	                     backdrop: "static"});
 }
 
-
-function runit() {
+function stopCode() {
 	if (python_worker) {
 		python_worker.terminate();
+		python_worker = null;
+		$("body").trigger("code-finished");
 	}
+}
+
+function runCode() {
+	stopCode();
 	python_worker = new Worker("js/run_python.js");
 
-	document.getElementById("output").innerHTML = "";
+	$("#code-output").html("");
 	python_worker.addEventListener("message", function(event) {
 		if (event.data.type === "stdout")
-			document.getElementById("output").innerHTML += event.data.message;
+			$("#code-output").append(event.data.message);
 		if (event.data.type === "done")
-			document.getElementById("output").innerHTML += "Done!";
+		{
+			$("#code-output").append("Done!");
+			$("body").trigger("code-finished");
+		}
+			
+		$("#code-output").scrollTop($("#code-output")[0].scrollHeight);
 	});
 
-	python_worker.postMessage(document.getElementById("code").value);
+	python_worker.postMessage($("#code-editor")[0].value);
+	$("body").trigger("code-started");
 }

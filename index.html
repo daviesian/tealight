@@ -23,101 +23,128 @@
   </head>
 
   <body>
-
-    <div id="wrap">
-	
-		<div class="navbar navbar-inverse navbar-fixed-top">
-		  <div class="container">
-			<div class="navbar-header">
-			  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			  </button>
-			  <a class="navbar-brand" href="#">TeaLight</a>
-			</div>
-			<div class="navbar-collapse collapse">
-			  <ul class="nav navbar-nav">
-				<li class="active"><a href="#">Home</a></li>
-				<li><a href="#about">Logo</a></li>
-				<li><a href="#contact">Robot</a></li>
-				<li><a href="#contact">Art</a></li>
-				<li class="dropdown">
-				  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-				  <ul class="dropdown-menu">
-					<li><a href="#">Action</a></li>
-					<li><a href="#">Another action</a></li>
-					<li><a href="#">Something else here</a></li>
-					<li class="divider"></li>
-					<li class="dropdown-header">Nav header</li>
-					<li><a href="#">Separated link</a></li>
-					<li><a href="#">One more separated link</a></li>
-				  </ul>
-				</li>
+    <!-- HEADER -->
+	<div class="navbar navbar-inverse navbar-fixed-top">
+	  <div class="container">
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		  </button>
+		  <a class="navbar-brand" href="#">TeaLight</a>
+		</div>
+		<div class="navbar-collapse collapse">
+		  <ul id="navtabs" class="nav navbar-nav">
+			<li class="active"><a href="#home" data-toggle="tab">Home</a></li>
+			<li><a href="#about" data-toggle="tab">About</a></li>
+			<li><a href="#code" data-toggle="tab" data-tealight-mode="logo">Logo</a></li>
+			<li><a href="#code" data-toggle="tab" data-tealight-mode="robot">Robot</a></li>
+			<li><a href="#code" data-toggle="tab" data-tealight-mode="art">Art</a></li>
+			<li class="dropdown">
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+			  <ul class="dropdown-menu">
+				<li><a href="#">Action</a></li>
+				<li><a href="#">Another action</a></li>
+				<li><a href="#">Something else here</a></li>
+				<li class="divider"></li>
+				<li class="dropdown-header">Nav header</li>
+				<li><a href="#">Separated link</a></li>
+				<li><a href="#">One more separated link</a></li>
 			  </ul>
-			  
-			  <form id="header-github-login" class="navbar-form navbar-right">
-				<div class="form-group">
-				  <input type="text" placeholder="Github Username" class="form-control">
-				</div>
-				<div class="form-group">
-				  <input type="password" placeholder="Github Password" class="form-control">
-				</div>
-				<button type="submit" class="btn btn-success github-signin">Sign in</button>
-			  </form>
-			  <div id="header-github-user" class="navbar-right">
-				  <p class="navbar-text">
-					Logged in as <span class="current-github-user"></span> 
-				  </p>
-			      <button type="button" class="btn btn-danger navbar-btn navbar-right logout-button">Logout</button>
-			  </div>
-			</div><!--/.navbar-collapse -->
-		  </div>
-		</div>
-
-		<!-- Main jumbotron for a primary marketing message or call to action -->
-		<div class="jumbotron">
-		  <div class="container">
-			<h1>Hello, world!</h1>
-			<p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-			<p><a class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-		  </div>
-		</div>
-
-		<div class="container">
-
-
-		  <!-- Example row of columns -->
-		  <div class="row">
-			<div class="col-lg-4">
-			  <h2>Code</h2>
-              <textarea id="code" rows="10" cols="40">
-i = 0
-while i &lt; 1000000:
-    if i % 10000 == 0:
-        print "Hello World %d" % i
-    i = i+1
-              </textarea></br>
-              <button type="button" onclick="runit()">Run</button></br>
-              <pre id="output"></pre>
-          </div>
-			<div class="col-lg-4">
-			  <h2>Heading</h2>
-			  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-			  <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
-		   </div>
-			<div class="col-lg-4">
-			  <h2>Heading</h2>
-			  <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-			  <p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+			</li>
+		  </ul>
+		  
+		  <form id="header-github-login" class="navbar-form navbar-right">
+			<div class="form-group">
+			  <input type="text" placeholder="Github Username" class="form-control">
 			</div>
+			<div class="form-group">
+			  <input type="password" placeholder="Github Password" class="form-control">
+			</div>
+			<button type="submit" class="btn btn-success github-signin">Sign in</button>
+		  </form>
+		  <div id="header-github-user" class="navbar-right">
+			  <p class="navbar-text">
+				Logged in as <span class="current-github-user"></span> 
+			  </p>
+			  <button type="button" class="btn btn-danger navbar-btn navbar-right logout-button">Logout</button>
 		  </div>
+		</div><!--/.navbar-collapse -->
+	  </div>
+	</div><!--/.navbar-->
 
-		  <hr>
+	<!-- CONTENT -->
+    <div id="wrap">
+		<div class="tab-content">
+		  <div class="tab-pane active" id="home">
+		    <!-- HOME TAB -->
+			<!-- Main jumbotron for a primary marketing message or call to action -->
+			<div class="jumbotron">
+			  <div class="container">
+				<h1>Hello, Tealight!</h1>
+				<p>This is a Computer Science teaching tool.</p>
+				<p><button class="btn btn-primary btn-lg choose-tab" data-target-tab="about">Learn more &raquo;</button></p>
+			  </div>
+			</div>
 
-		</div> <!-- /container -->
-	</div>
+			<div class="container">
+
+
+			  <!-- Example row of columns -->
+			  <div class="row">
+				<div class="col-lg-4">
+				  <h2>Logo Mode</h2>
+				  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+				  <p><button class="btn btn-default choose-tealight-mode" data-target-tealight-mode="logo">Logo Mode &raquo;</button></p>
+			   </div>
+				<div class="col-lg-4">
+				  <h2>Robot Mode</h2>
+				  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+				  <p><button class="btn btn-default choose-tealight-mode" data-target-tealight-mode="robot">Robot Mode &raquo;</button></p>
+			   </div>
+				<div class="col-lg-4">
+				  <h2>Art Mode</h2>
+				  <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+				  <p><button class="btn btn-default choose-tealight-mode" data-target-tealight-mode="art">Art Mode &raquo;</button></p>
+				</div>
+			  </div>
+
+			  <hr>
+
+			</div> <!-- /container -->
+		  
+		  </div>
+		  <div class="tab-pane" id="about">
+			  <!-- ABOUT TAB -->
+				Here is some info about Tealight.
+		  </div>
+		  <div class="tab-pane" id="code">
+			  <!-- CODE TAB -->
+				<div class="col-lg-4">
+				  <h2>Code</h2>
+				  <div id="code-panel">
+				  <textarea id="code-editor" rows="10" cols="40">
+i = 0
+while i &lt; 200000:
+	if i % 10000 == 0:
+		print "Hello World %d" % i
+	i = i+1
+				  </textarea>
+				  <div id="code-buttons">
+					  <button id="run-code" class="btn btn-success" type="button">Run</button>
+					  <button id="stop-code" class="btn btn-danger" type="button" disabled>Stop</button>
+				  </div>
+				  </div>
+				  <pre id="code-output"></pre>
+			  </div>
+		  
+		  </div>
+		</div>
+		
+	</div> <!--/content-->
 	
+	<!-- FOOTER -->
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Tealight &copy 2013 <a href="http://github.com/LeszekSwirski">Leszek Świrski</a> and <a href="http://github.com/daviesian">Ian Davies</a>.</p>
@@ -125,7 +152,7 @@ while i &lt; 1000000:
     </div>
 	
 	
-	<!-- Modal -->
+	<!-- Modal Login-->
   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
 			<form class="form-horizontal" role="form">
@@ -149,7 +176,7 @@ while i &lt; 1000000:
 		</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary github-signin" data-dismiss="modal">Login</button>
+          <button type="submit" class="btn btn-primary github-signin" data-dismiss="modal">Login</button>
         </div>
       </div><!-- /.modal-content -->
 			</form>
@@ -179,7 +206,7 @@ while i &lt; 1000000:
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/bootstrap/bootstrap.js"></script>
 	<script src="js/github.js"></script>
 	<script src="js/tealight.js"></script>
   </body>
