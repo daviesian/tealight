@@ -9,7 +9,8 @@ GitHub.getUserToken = function(user, password, successCallback, errorCallback)
 	// First get auths and check whether tealight already has one.
 	$.ajax("https://api.github.com/authorizations",
 		{headers: {"Authorization": "Basic "+btoa(user+":"+password)},
-		 type: "GET"})
+		 type: "GET",
+		 cache: false})
 		 
 	.success(function(auths)
 	{
@@ -48,6 +49,7 @@ GitHub.prototype.getRepo = function(name, successCallback, errorCallback)
 		.error(errorCallback);
 }
 
+/*
 GitHub.prototype.createRepo = function(name, successCallback, errorCallback)
 {
 	$.ajax("https://api.github.com/user/repos", 
@@ -63,7 +65,7 @@ GitHub.prototype.createRepo = function(name, successCallback, errorCallback)
 			auto_init: true
 		 })}).success(function(r)
 			 {
-				console.log("Repository \"\" created successfully.");
+				console.log("Repository \"" + name + "\" created successfully.");
 				if (successCallback)
 					successCallback(r);
 			 })
@@ -79,6 +81,21 @@ GitHub.prototype.getOrCreateRepo = function(name, successCallback, errorCallback
 		console.warn("Repository \"" + name + "\" not found. Creating.");
 		gh.createRepo(name,successCallback, errorCallback);
 	});
+}
+*/
+GitHub.prototype.forkRepo = function(owner, name, successCallback, errorCallback)
+{
+	$.ajax("https://api.github.com/repos/" + owner + "/" + name + "/forks", 
+		{headers: {"Authorization": "token " + this.token},
+		 type: "POST",
+		 })
+		 .success(function(r)
+		 {
+			console.log("Repository \"" + owner + "/" + name + "\" forking started successfully.");
+			if (successCallback)
+				successCallback(r);
+		 })
+		 .error(errorCallback);
 }
 
 GitHub.prototype.createFile = function(repo, path, successCallback, errorCallback)
@@ -106,7 +123,8 @@ GitHub.prototype.getFile = function(repo, path, successCallback, errorCallback)
 	$.ajax("https://api.github.com/repos/"+ this.user +"/"+ repo + "/contents/" + path, 
 		{
 			headers: {"Authorization": "token " + this.token},
-			type: "GET"
+			type: "GET",
+			cache: false
 		})
 		.success(successCallback)
 		.error(errorCallback);
@@ -131,6 +149,26 @@ GitHub.prototype.listFiles = function(repo, directory, successCallback, errorCal
 	this.getFile(repo, directory, successCallback, errorCallback);
 }
 
+GitHub.prototype.commitChange = function(originalFile, newContent, successCallback, errorCallback)
+{
+	$.ajax(originalFile.url, 
+		{headers: {"Authorization": "token " + this.token},
+		 type: "PUT",
+		 data: JSON.stringify(
+		 {
+			message: "Update " + originalFile.path,
+			content: btoa(newContent),
+			sha: originalFile.sha
+		 })
+		 })
+		 .success(function(f)
+		 {
+			console.log("File \"" + originalFile.path + "\" updated successfully.");
+			if (successCallback)
+				successCallback(f);
+		 })
+		 .error(errorCallback);
+}
 
 
 

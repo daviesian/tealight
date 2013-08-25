@@ -1,12 +1,16 @@
-var github = null;
+﻿var github = null;
 var python_worker = null;
+var currentFile = null;
 
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
 $(function()
 {
 	// Document ready
 	
 	
-	//ensureGithubAvailable();
+	ensureGithubAvailable();
 	
 });
 
@@ -23,16 +27,7 @@ $("body").on("click", ".github-signin", function(e)
 	userField.value = "";
 	passwordField.value = "";
 	
-	githubTokenToCookie(username, password, function()
-	{// SUCCESS
-		github = githubFromCookie();
-		console.log("Logged in to Github as \"" + username + "\"");
-		displayGithubStatus();
-	}, function(e)
-	{// FAIL
-		console.error("Could not login to Github: ", e.responseJSON.message);
-		modalError("Login failed", e.responseJSON.message);
-	})
+	githubLogin(username, password);
 	
 	e.preventDefault();
 	return false;
@@ -40,10 +35,7 @@ $("body").on("click", ".github-signin", function(e)
 
 $("body").on("click", ".logout-button", function(e)
 {
-	github = null;
-	document.cookie = 'tealight-user=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-	document.cookie = 'tealight-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-	displayGithubStatus();
+	githubLogout();
 	e.preventDefault();
 	return false;
 });
@@ -68,6 +60,8 @@ $("body").on("show.bs.tab", "a[data-toggle='tab']", function(e)
 	{
 		var codeMode = $(e.target).data("tealightMode");
 		console.log("Code mode", codeMode);
+		$(".mode-title").html(codeMode.capitalize() + " Mode");
+		loadTealightFilesFromRepo(codeMode);
 	}
 });
 
@@ -93,6 +87,15 @@ $("body").on("code-finished", function(e)
 	$("#stop-code").attr("disabled", true);
 });
 
+$("body").on("tealight-files-repo-confirmed", function(e)
+{
+	//loadTealightFilesFromRepo();
+});
+
+$("body").on("file-loaded", function(e)
+{
+	$("#current-code-file").html(currentFile.name);
+});
 
 function modalError(title, message)
 {
@@ -103,14 +106,21 @@ function modalError(title, message)
 
 function ensureGithubAvailable()
 {
+	if (github)
+		return; // Github already logged in.
+		
 	github = githubFromCookie();
 	if (github)
 	{
+		// Login was successful.
+		ensureTealightFilesRepo();
 		displayGithubStatus();
 	}
 	else
 	{
-		doGithubLogin();
+		// No cookie, force login dialog.
+		$('#myModal').modal({show: true,
+							 backdrop: "static"});
 	}
 }
 
@@ -147,7 +157,10 @@ function githubFromCookie()
 	var token = getCookie("tealight-token");
 	
 	if (user && token)
-		return new GitHub(user, token);
+	{
+		var g = new GitHub(user, token);		
+		return g
+	}
 	else
 		return null;
 }
@@ -187,10 +200,193 @@ function getCookie(c_name)
 	return c_value;
 }
 
-function doGithubLogin()
+function githubLogin(username, password)
 {
-	$('#myModal').modal({show: true,
-	                     backdrop: "static"});
+	githubTokenToCookie(username, password, function()
+	{// SUCCESS
+		github = githubFromCookie();
+		console.log("Logged in to Github as \"" + username + "\"");
+		ensureTealightFilesRepo();
+		displayGithubStatus();
+	}, function(e)
+	{// FAIL
+		console.error("Could not login to Github: ", e.responseJSON.message);
+		modalError("Login failed", e.responseJSON.message);
+	})
+}
+
+function githubLogout()
+{
+	github = null;
+	document.cookie = 'tealight-user=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	document.cookie = 'tealight-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	displayGithubStatus();
+}
+
+function ensureTealightFilesRepo(successCallback, errorCallback)
+{
+	// Check whether the tealight-files repo exists.
+	var tf = github.getRepo("tealight-files", function(e)
+	{
+		console.log("User already has tealight-files repo.");
+		$("body").trigger("tealight-files-repo-confirmed");
+		if (successCallback)
+			successCalback();
+	}, function(e)
+	{
+		// If it doesn't, fork from tealight/tealight-files
+		console.log("Could not find tealight-files repo. Forking");
+		github.forkRepo("tealight", "tealight-files", function(e)
+		{
+			console.log("Started forking tealight-files");
+			// Wait for fork to be completed (modal dialog)
+			waitForRepo("tealight-files", 10, function(ev)
+			{
+				console.log("tealight-files repo forked successfully.");
+				$("body").trigger("tealight-files-repo-confirmed");
+				if (successCallback)
+					successCallback();
+			}, function(ev)
+			{
+				console.error("Timeout while waiting for tealight-files fork to become available");
+				if (errorCallback)
+					errorCallback(ev);
+			});
+		}, function(e)
+		{
+			console.log("Could not fork tealight-files");
+			// Could not fork repo.
+			modalError(e.responseJSON.message);
+		});
+	});
+}
+
+function modalDialog(title, message)
+{
+	$('#modal-tealight-dialog .modal-title').html(title);
+	$('#modal-tealight-dialog .modal-body').html(message);
+	$('#modal-tealight-dialog').modal("show");
+}
+
+function modalHide()
+{
+	$('#modal-tealight-dialog').modal("hide");
+}
+function waitForRepo(name, timeoutSecs, successCallback, errorCallback)
+{
+	// Show modal loading dialog
+	modalDialog("Forking initial tealight source files", "Please wait...");
+	
+	var recheckRepo = function()
+	{
+		// Every 1 sec, check whether repo exists
+		var r = github.getRepo(name, function()
+		{
+			// If exists, show success dialog.
+			console.log("Repo created successfully");
+			modalHide();
+			
+			if (successCallback)
+				successCallback();
+		}, function()
+		{
+			// If not, wait another second.
+			console.log("Repo still doesn't exist. Waiting...");
+			if (timeoutSecs > 0)
+			{
+				timeoutSecs -= 1000;
+				setTimeout(recheckRepo, 1000);
+			}
+			else
+			{
+				// timeout expired
+				modalHide();
+				console.log("Timeout expired waiting for repo fork.");
+				if (errorCallback)
+					errorCallback();
+			}
+		});
+	}
+	
+	// Force this to take long enough for the dialog to appear.
+	setTimeout(recheckRepo, 3000);
+	
+		
+}
+
+function loadTealightFilesFromRepo(mode)
+{
+	console.log("Loading tealight source files from repo");
+	var files = github.listFiles("tealight-files", mode, function(files)
+	{
+		$("#file-list").html("");
+		var firstFile = null;
+		for(var i in files)
+		{
+			var f = files[i];
+			$("#file-list").append($('<li/>').append($('<a/>').attr("href", "#")
+			                                                  .html(f.name)
+															  .data("filePath", f.path)
+															  .click(function(e)
+			{
+				console.log("Clicked file", $(e.target).data("filePath"));
+				loadFile($(e.target).data("filePath"));
+			})));
+			
+			if (!firstFile)
+				firstFile = f.path;
+		}
+		loadFile(firstFile);
+	},
+	ajaxError);
+}
+
+function loadFile(path)
+{
+	console.log("Loading file", path);
+	
+	if (currentFile)
+	{
+		save();
+	}
+	
+	
+	github.getFile("tealight-files", path, function(newFile)
+	{
+		newFile.plainContent = atob(newFile.content.replace(/\s/g, ''));
+		currentFile = newFile;
+		console.log("Successfully loaded", path, newFile);
+		$("#code-editor").val(newFile.plainContent); // content has a newline at the end!
+		console.log("Successfully loaded", path, "into editor");
+		$("body").trigger("file-loaded");
+	},
+	function(e)
+	{
+		currentFile = null;
+		ajaxError(e);
+	});
+	
+}
+
+function save()
+{
+	if (currentFile)
+	{
+		if (currentFile.plainContent != $("#code-editor").val())
+		{
+			console.log("Content has changed. Saving", currentFile.path, ".");
+			github.commitChange(currentFile, $("#code-editor").val(), function(f)
+			{
+				console.log("Got back",f,"from commit");
+				currentFile.sha = f.content.sha;
+			}, ajaxError);
+		}
+		else
+		{
+			console.log("Not saving. Content unchanged.");
+		}
+		// Save the current file.
+	}
 }
 
 function stopCode() {

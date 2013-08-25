@@ -122,8 +122,14 @@
 		  <div class="tab-pane" id="code">
 			  <!-- CODE TAB -->
 				<div class="col-lg-4">
-				  <h2>Code</h2>
 				  <div id="code-panel">
+				  <div class="btn-group" id="code-header">
+					<button class="btn btn-default pull-right dropdown-toggle" data-toggle="dropdown" type="button"><span id="current-code-file">Loading...</span> <b class="caret"></b></button>
+					  <ul id="file-list" class="dropdown-menu pull-right" role="menu">
+					  </ul>
+					 
+					<span class="lead mode-title"></span>
+				  </div>
 				  <textarea id="code-editor" rows="10" cols="40">
 i = 0
 while i &lt; 200000:
@@ -197,6 +203,24 @@ while i &lt; 200000:
 		</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" data-dismiss="modal">OK</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  
+	<!-- Modal Loading -->
+  <div class="modal fade" id="modal-tealight-dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+			<form class="form-horizontal" role="form">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Waiting</h4>
+        </div>
+        <div class="modal-body">
+			Waiting for background task to complete...
+		</div>
+        <div class="modal-footer">
+
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
