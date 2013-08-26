@@ -11,7 +11,7 @@ function builtinRead(x) {
 
 	if (Sk.builtinFiles && Sk.builtinFiles["files"][x])
 		return Sk.builtinFiles["files"][x]
-	
+
 	// If the file is in the cache, return it.
 	if (tealightModules[x] !== undefined)
 	{
@@ -26,16 +26,16 @@ function builtinRead(x) {
 			return tealightModules[x];
 		}
 	}
-	
-		
+
+
 	if (x.indexOf("skulpt-modules/") > -1)
 	{
 		var http = new XMLHttpRequest();
 		var url = x;
-		
+
 		http.open("GET", url, false);
 		http.send(null);
-		
+
 		if (http.status == 200)
 		{
 			ev("console.log('Adding', \"" + url + "\", 'to cache');");
@@ -49,9 +49,9 @@ function builtinRead(x) {
 			postMessage({type: "module_cache", modules: tealightModules});
 			ev("console.warn('Caching 404 for ', \"" + url + "\");");
 		}
-		
+
 	}
-	
+
 	throw "File not found: '" + x + "'";
 }
 
@@ -66,13 +66,13 @@ self.onmessage = function(event) {
 			Sk.configure({
 				output: function(text) {
 					postMessage({type: "stdout", message: text});
-					
+
 				},
 				read: builtinRead,
 				syspath: ["skulpt-modules"]
-			}); 
-			
-			eval(Sk.importMainWithBody("<stdin>", false, event.data.code)); 
+			});
+
+			eval(Sk.importMainWithBody("<stdin>", false, event.data.code));
 			postMessage({type: "done"});
 			break;
 	}
