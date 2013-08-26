@@ -1,7 +1,7 @@
 var Logo = {
 	move: function(distance)
 	{
-		console.log("Move", distance, "on", this.canvas);
+		//console.log("Move", distance, "on", this.canvas);
 		
 		var targetX = this.x + Math.cos(Math.PI * this.angle / 180) * distance;
 		var targetY = this.y + Math.sin(Math.PI * this.angle / 180) * distance;
@@ -19,7 +19,7 @@ var Logo = {
 	
 	turn: function(angle)
 	{
-		console.log("Turn", angle);
+		//console.log("Turn", angle);
 		this.angle += angle;
 		
 		while (angle >= 360)
@@ -50,7 +50,7 @@ var Logo = {
 	
 	color: function(c)
 	{
-		console.log("Color", c);
+		//console.log("Color", c);
 		this._color = c;
 	},
 	

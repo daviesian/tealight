@@ -1,14 +1,58 @@
 importScripts("skulpt/skulpt.js", "skulpt/skulpt-stdlib.js")
 
-modules = {};
+tealightModules = {};
+
+function ev(code)
+{
+	postMessage({type: "eval", code: code});
+}
 
 function builtinRead(x) {
-	if (modules[x])
-		return modules[x];
+
+	if (Sk.builtinFiles && Sk.builtinFiles["files"][x])
+		return Sk.builtinFiles["files"][x]
+	
+	// If the file is in the cache, return it.
+	if (tealightModules[x] !== undefined)
+	{
+		if (tealightModules[x] === null)
+		{
+			ev("console.log('Replaying cached 404 for', \"" + x + "\");");
+			throw "File not found";
+		}
+		else
+		{
+			ev("console.log('Retrieved', \"" + x + "\", 'from cache');");
+			return tealightModules[x];
+		}
+	}
+	
 		
-    if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
-            throw "File not found: '" + x + "'";
-    return Sk.builtinFiles["files"][x];
+	if (x.indexOf("skulpt-modules/") > -1)
+	{
+		var http = new XMLHttpRequest();
+		var url = x;
+		
+		http.open("GET", url, false);
+		http.send(null);
+		
+		if (http.status == 200)
+		{
+			ev("console.log('Adding', \"" + url + "\", 'to cache');");
+			tealightModules[x] = http.responseText;
+			postMessage({type: "module_cache", modules: tealightModules});
+			return http.responseText;
+		}
+		else
+		{
+			tealightModules[x] = null;
+			postMessage({type: "module_cache", modules: tealightModules});
+			ev("console.warn('Caching 404 for ', \"" + url + "\");");
+		}
+		
+	}
+	
+	throw "File not found: '" + x + "'";
 }
 
 self.onmessage = function(event) {
@@ -16,7 +60,7 @@ self.onmessage = function(event) {
 	switch (event.data.type)
 	{
 		case "MODULES":
-			modules = event.data.modules;
+			tealightModules = event.data.modules;
 			break;
 		case "RUN":
 			Sk.configure({
@@ -24,8 +68,8 @@ self.onmessage = function(event) {
 					postMessage({type: "stdout", message: text});
 					
 				},
-				read: builtinRead
-				
+				read: builtinRead,
+				syspath: ["skulpt-modules"]
 			}); 
 			
 			eval(Sk.importMainWithBody("<stdin>", false, event.data.code)); 

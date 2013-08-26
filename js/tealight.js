@@ -4,7 +4,8 @@ var currentFile = null;
 var codeMirror = null;
 var codeMode = null;
 
-var skulptModules = {};
+var tealightSkulptModuleCache = {};
+
 
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -13,7 +14,6 @@ $(function()
 {
 	// Document ready
 	
-	loadSkulptModule("./logo.js", "js/skulpt-tealight/logo.js");
 	
 	ensureGithubAvailable();
 	
@@ -413,14 +413,6 @@ function stopCode() {
 	}
 }
 
-function loadSkulptModule(skulptPath, uri)
-{
-	$.get(uri, function(e)
-	{
-		skulptModules[skulptPath] = e;
-	});
-}
-
 function runCode() {
 	stopCode();
 	python_worker = new Worker("js/run_python.js");
@@ -443,12 +435,16 @@ function runCode() {
 			case "eval":
 				eval(event.data.code);
 				break;
+			case "module_cache":
+				tealightSkulptModuleCache = event.data.modules;
+				break;
+			
 		}
 			
 		$("#code-output").scrollTop($("#code-output")[0].scrollHeight);
 	});
 	
-	python_worker.postMessage({type: "MODULES", modules: skulptModules});
+	python_worker.postMessage({type: "MODULES", modules: tealightSkulptModuleCache});
 	python_worker.postMessage({type: "RUN", code: codeMirror.getValue()});
 	$("body").trigger("code-started");
 }
