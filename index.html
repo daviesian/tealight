@@ -41,11 +41,11 @@
 		</div>
 		<div class="navbar-collapse collapse">
 		  <ul id="navtabs" class="nav navbar-nav">
-			<li class="active"><a href="#home" data-toggle="tab">Home</a></li>
-			<li><a href="#about" data-toggle="tab">About</a></li>
-			<li><a href="#code" data-toggle="tab" data-tealight-mode="logo">Logo</a></li>
-			<li><a href="#code" data-toggle="tab" data-tealight-mode="robot">Robot</a></li>
-			<li><a href="#code" data-toggle="tab" data-tealight-mode="art">Art</a></li>
+			<li class="active"><a href="#home" data-toggle="tab" data-github-required="false">Home</a></li>
+			<li><a href="#about" data-toggle="tab" data-github-required="false">About</a></li>
+			<li><a href="#code" data-toggle="tab" data-tealight-mode="logo" data-github-required="true">Logo</a></li>
+			<li><a href="#code" data-toggle="tab" data-tealight-mode="robot" data-github-required="true">Robot</a></li>
+			<li><a href="#code" data-toggle="tab" data-tealight-mode="art" data-github-required="true">Art</a></li>
 			<li class="dropdown">
 			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
 			  <ul class="dropdown-menu">
@@ -61,7 +61,7 @@
 		  </ul>
 		  
 		  <div id="header-github-login" class="navbar-right">
-			  <button type="button" class="btn btn-success navbar-btn navbar-right login-button">Login with Github</button>
+			  <button type="button" class="btn btn-success navbar-btn navbar-right login-button" data-loading-text="Redirecting...">Login with Github</button>
 		  </div>
 		  <div id="header-github-user" class="navbar-right">
 			  <p class="navbar-text">
@@ -81,9 +81,16 @@
 			<!-- Main jumbotron for a primary marketing message or call to action -->
 			<div class="jumbotron">
 			  <div class="container">
-				<h1>Hello, Tealight!</h1>
+				<h1>Welcome to Tealight!</h1>
+				<hr>
+				<div class="col-lg-6">
 				<p>This is a Computer Science teaching tool.</p>
 				<p><button class="btn btn-primary btn-lg choose-tab" data-target-tab="about">Learn more &raquo;</button></p>
+				</div>
+				<div id="github-login-prompt" class="col-lg-6">
+					<p>To get started, please login with Github</p>
+					<p><button class="btn btn-success btn-lg login-button" data-loading-text="Redirecting...">Login with Github &raquo;</button></p>
+				</div>
 			  </div>
 			</div>
 
@@ -156,30 +163,19 @@
 	
 	
 	<!-- Modal Login-->
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal fade" id="modal-login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
 			<form class="form-horizontal" role="form">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Login to Github</h4>
+          <h4 class="modal-title">Login required</h4>
         </div>
         <div class="modal-body">
-			  <div class="form-group">
-				<label for="inputEmail1" class="col-lg-4 control-label">Github Username</label>
-				<div class="col-lg-8">
-				  <input type="text" class="form-control" id="inputEmail1" placeholder="Username">
-				</div>
-			  </div>
-			  <div class="form-group">
-				<label for="inputPassword1" class="col-lg-4 control-label">Github Password</label>
-				<div class="col-lg-8">
-				  <input type="password" class="form-control" id="inputPassword1" placeholder="Password">
-				</div>
-			  </div>
+			To get started, please login with Github.
 		</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary github-signin" data-dismiss="modal">Login</button>
+          <button type="submit" class="btn btn-success login-button" data-dismiss="modal">Login &raquo;</button>
         </div>
       </div><!-- /.modal-content -->
 			</form>
@@ -231,6 +227,7 @@
 	<script src="js/codemirror/codemirror.js"></script>
 	<script src="js/codemirror/modes/python.js"></script>
 	<script src="js/github.js"></script>
+	<script src="js/github_application.js"></script>
 	<script src="js/tealight.js"></script>
 	<script src="js/logo.js"></script>
 	

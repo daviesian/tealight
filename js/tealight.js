@@ -6,8 +6,6 @@ var codeMode = null;
 
 var tealightSkulptModuleCache = {};
 
-var github_client_id = "f4de972464cb742d3671";
-var tealight_auth_code = "6a5b3c00548a75fa03e873e0c2cc5ed39de18f879165164d63d61c0acabf791e615545533d19f7683206f7ae33bea2911440d8c96a4981b5bef5cf8ba0eca534e577cdb722d53343d80dc2b64f681bcb0e487149a5ed6ee78b755fe8a3519499";
 
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -32,37 +30,44 @@ $(function()
 	// Document ready
 	
 	
-	//ensureGithubAvailable();
 	
 	if ("code" in urlParams)
 	{
-		$.ajax("http://www-dyn.cl.cam.ac.uk/~ipd21/tealight-auth-server/?tealight_auth_code=" + tealight_auth_code + "&client_id=" + github_client_id + "&github_code=" + urlParams["code"],
+		// This is a callback from Github auth page.
+		
+		$.ajax(tealight_auth_server + "?tealight_auth_code=" + tealight_auth_code + "&client_id=" + github_client_id + "&github_code=" + urlParams["code"],
                {type: "GET",
 			    dataType: "json"})
 			.success(function(r)
 			{
 				document.cookie = "tealight-token=" + r.access_token;
 				document.location.href = document.location.href.split("?")[0];
-				//console.log(r);
 			}).error(function(e)
 			{
 				console.error(e);
 			});
-		        
-	}
-	
-	if (getCookie("tealight-token"))
+	} 
+	else if (getCookie("tealight-token"))
 	{
+		// We already have a token stored in the cookie, login as that user.
 		GitHub.getUser(getCookie("tealight-token"), function(u)
 		{
-			console.log("User:", u);
 			github = new GitHub(u, getCookie("tealight-token"));
 			displayGithubStatus();
 		}, ajaxError);
+	} 
+	else
+	{
+		// We do not have a token in the cookie. Display login button.
+		displayGithubStatus();
 	}
 	
-	displayGithubStatus();
+	if ("error" in urlParams)
+	{
+		modalError("Login Error", "Github returned an error during login: <code>" + urlParams["error"] + "</code>"); 
+	}
 	
+	// Init code editor.
 	codeMirror = CodeMirror($("#code-editor")[0],
 	{
 		mode: "python",
@@ -76,7 +81,7 @@ $(function()
 
 $("body").on("click", ".login-button", function(e)
 {
-	document.location.href="https://github.com/login/oauth/authorize?client_id=" + github_client_id;
+	document.location.href="https://github.com/login/oauth/authorize?scope=public_repo&client_id=" + github_client_id;
 });
 
 $("body").on("click", ".logout-button", function(e)
@@ -96,6 +101,11 @@ $("body").on("click", ".choose-tealight-mode", function(e)
 
 $("body").on("show.bs.tab", "a[data-toggle='tab']", function(e)
 {
+	if ($(e.target).data("githubRequired") && !github)
+	{
+		$("#modal-login").modal("show");
+		return false;
+	}
 	var previousTab = $(e.relatedTarget).attr("href");
 	var newTab = $(e.target).attr("href");
 	console.log("Leaving tab", previousTab, "entering tab", newTab);
@@ -173,7 +183,7 @@ function displayGithubStatus()
 	if(github)
 	{
 		$("#header-github-login").hide();
-		$(".current-github-user").html("<a href=\"" + github.user.url + "\">" + github.user.login + "</a>");
+		$(".current-github-user").html("<a target=\"_blank\" href=\"" + github.user.html_url + "\">" + github.user.login + "</a>");
 		$("#header-github-user").show();
 	}
 	else
@@ -182,33 +192,6 @@ function displayGithubStatus()
 		$("#header-github-login").show();
 	}
 }
-/*
-function githubTokenToCookie(user, password, successCallback, errorCallback)
-{
-	GitHub.getUserToken(user, password, function(t) 
-	{
-		document.cookie = "tealight-user=" + user;
-		document.cookie = "tealight-token=" + t.token;
-		
-		if (successCallback)
-			successCallback();
-	}, errorCallback);
-}
-
-function githubFromCookie()
-{
-	var user = getCookie("tealight-user");
-	var token = getCookie("tealight-token");
-	
-	if (user && token)
-	{
-		var g = new GitHub(user, token);		
-		return g
-	}
-	else
-		return null;
-}
-*/
 
 function ajaxError(x)
 {
@@ -243,21 +226,6 @@ function getCookie(c_name)
 	}
 	
 	return c_value;
-}
-
-function githubLogin(username, password)
-{
-	githubTokenToCookie(username, password, function()
-	{// SUCCESS
-		github = githubFromCookie();
-		console.log("Logged in to Github as \"" + username + "\"");
-		ensureTealightFilesRepo();
-		displayGithubStatus();
-	}, function(e)
-	{// FAIL
-		console.error("Could not login to Github: ", e.responseJSON.message);
-		modalError("Login failed", e.responseJSON.message);
-	})
 }
 
 function githubLogout()

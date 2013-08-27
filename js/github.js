@@ -14,43 +14,6 @@ GitHub.getUser = function(token, successCallback, errorCallback)
 		 .error(errorCallback);
 
 }
-/*
-GitHub.getUserToken = function(user, password, successCallback, errorCallback)
-{
-	// First get auths and check whether tealight already has one.
-	$.ajax("https://api.github.com/authorizations",
-		{headers: {"Authorization": "Basic "+btoa(user+":"+password)},
-		 type: "GET",
-		 cache: false})
-		 
-	.success(function(auths)
-	{
-		for(var a in auths)
-		{
-			if (auths[a].note == "tealight")
-			{
-				console.log("Found existing tealight auth token. Reusing.");
-				if (successCallback)
-					successCallback(auths[a]);
-				return;
-			}
-		}
-		
-		console.warn("No existing tealight auth token found. Creating.");
-		
-		$.ajax("https://api.github.com/authorizations", 
-			{headers: {"Authorization": "Basic "+btoa(user+":"+password)},
-			 type: "POST",
-			 data: JSON.stringify({scopes: ['repo'],
-								   note: "tealight"})})
-			.success(successCallback)
-			.error(errorCallback);
-		
-	})
-	.error(errorCallback);
-		 
-	
-}*/
 
 GitHub.prototype.getRepo = function(name, successCallback, errorCallback)
 {
@@ -60,40 +23,6 @@ GitHub.prototype.getRepo = function(name, successCallback, errorCallback)
 		.error(errorCallback);
 }
 
-/*
-GitHub.prototype.createRepo = function(name, successCallback, errorCallback)
-{
-	$.ajax("https://api.github.com/user/repos", 
-		{headers: {"Authorization": "token " + this.token},
-		 type: "POST",
-		 data: 
-		 JSON.stringify({
-			name: name,
-			description: "Tealight source files",
-			has_issues: false,
-			has_wiki: false,
-			has_downloads: false,
-			auto_init: true
-		 })}).success(function(r)
-			 {
-				console.log("Repository \"" + name + "\" created successfully.");
-				if (successCallback)
-					successCallback(r);
-			 })
-		     .error(errorCallback);
-}
-
-GitHub.prototype.getOrCreateRepo = function(name, successCallback, errorCallback)
-{
-	gh = this;
-	this.getRepo(name, successCallback, function()
-	{
-		// getRepo failed. Create the repo.
-		console.warn("Repository \"" + name + "\" not found. Creating.");
-		gh.createRepo(name,successCallback, errorCallback);
-	});
-}
-*/
 GitHub.prototype.forkRepo = function(owner, name, successCallback, errorCallback)
 {
 	$.ajax("https://api.github.com/repos/" + owner + "/" + name + "/forks", 
@@ -111,9 +40,10 @@ GitHub.prototype.forkRepo = function(owner, name, successCallback, errorCallback
 
 GitHub.prototype.createFile = function(repo, path, successCallback, errorCallback)
 {
-	$.ajax("https://api.github.com/repos/"+ this.user.login +"/"+ repo + "/contents/" + path + "?access_token=" + this.token, 
+	$.ajax("https://api.github.com/repos/"+ this.user.login +"/"+ repo + "/contents/" + path,
 		{
 			type: "PUT",
+			headers: {"Authorization": "token " + this.token},
 			data: 
 			JSON.stringify({
 				message: "Creating " + path,
@@ -161,8 +91,9 @@ GitHub.prototype.listFiles = function(repo, directory, successCallback, errorCal
 
 GitHub.prototype.commitChange = function(originalFile, newContent, message, successCallback, errorCallback)
 {
-	$.ajax(originalFile.url + "&access_token=" + this.token, 
+	$.ajax(originalFile.url,
 		{type: "PUT",
+		 headers: {"Authorization": "token " + this.token},
 		 data: JSON.stringify(
 		 {
 			message: message,
@@ -178,19 +109,3 @@ GitHub.prototype.commitChange = function(originalFile, newContent, message, succ
 		 })
 		 .error(errorCallback);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
