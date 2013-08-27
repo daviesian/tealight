@@ -6,16 +6,49 @@ var codeMode = null;
 
 var tealightSkulptModuleCache = {};
 
+var github_client_id = "f4de972464cb742d3671";
+var tealight_auth_code = "6a5b3c00548a75fa03e873e0c2cc5ed39de18f879165164d63d61c0acabf791e615545533d19f7683206f7ae33bea2911440d8c96a4981b5bef5cf8ba0eca534e577cdb722d53343d80dc2b64f681bcb0e487149a5ed6ee78b755fe8a3519499";
 
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
+
+var urlParams;
+(window.onpopstate = function () {
+    var match,
+        pl     = /\+/g,  // Regex for replacing addition symbol with a space
+        search = /([^&=]+)=?([^&]*)/g,
+        decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+        query  = window.location.search.substring(1);
+
+    urlParams = {};
+    while (match = search.exec(query))
+       urlParams[decode(match[1])] = decode(match[2]);
+})();
+
+
 $(function()
 {
 	// Document ready
 	
 	
-	ensureGithubAvailable();
+	//ensureGithubAvailable();
+	
+	if ("code" in urlParams)
+	{
+		$.ajax("http://www-dyn.cl.cam.ac.uk/~ipd21/tealight-auth-server/?tealight_auth_code=" + tealight_auth_code + "&client_id=" + github_client_id + "&github_code=" + urlParams["code"],
+               {type: "GET",
+			    dataType: "json"})
+			.success(function(r)
+			{
+				document.cookie = "tealight-token=" + t.token;
+				console.log(r);
+			}).error(function(e)
+			{
+				console.error(e);
+			});
+		        
+	}
 	
 	codeMirror = CodeMirror($("#code-editor")[0],
 	{
@@ -28,28 +61,14 @@ $(function()
 
 // EVENT HANDLERS
 
-$("body").on("click", ".github-signin", function(e)
+$("body").on("click", ".login-button", function(e)
 {
-	var btn = e.target;
-	var userField = $(btn).closest("form").find("input[type='text']")[0];
-	var passwordField = $(btn).closest("form").find("input[type='password']")[0];
-	var username = userField.value;
-	var password = passwordField.value;
-	
-	userField.value = "";
-	passwordField.value = "";
-	
-	githubLogin(username, password);
-	
-	e.preventDefault();
-	return false;
+	document.location.href="https://github.com/login/oauth/authorize?client_id=" + github_client_id;
 });
 
 $("body").on("click", ".logout-button", function(e)
 {
 	githubLogout();
-	e.preventDefault();
-	return false;
 });
 
 $("body").on("click", ".choose-tab", function(e)
