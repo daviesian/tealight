@@ -40,6 +40,10 @@ body {
 	display: none;
 }
 
+#header-github-login {
+	display: none;
+}
+
 #code-editor {
 	position: absolute;
 	top: 50px;

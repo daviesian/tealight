@@ -4,6 +4,17 @@ function GitHub(user, token)
 	this.token = token;
 }
 
+GitHub.getUser = function(token, successCallback, errorCallback)
+{
+	// First get auths and check whether tealight already has one.
+	$.ajax("https://api.github.com/user",
+		{data: {"access_token": token},
+		 type: "GET"})
+		 .success(successCallback)
+		 .error(errorCallback);
+
+}
+/*
 GitHub.getUserToken = function(user, password, successCallback, errorCallback)
 {
 	// First get auths and check whether tealight already has one.
@@ -39,12 +50,12 @@ GitHub.getUserToken = function(user, password, successCallback, errorCallback)
 	.error(errorCallback);
 		 
 	
-}
+}*/
 
 GitHub.prototype.getRepo = function(name, successCallback, errorCallback)
 {
-	$.ajax("https://api.github.com/repos/" + this.user + "/" + name,
-	    {headers: {"Authorization": "token " + this.token}})
+	$.ajax("https://api.github.com/repos/" + this.user.login + "/" + name,
+	    {data: {"access_token": this.token}})
 		.success(successCallback)
 		.error(errorCallback);
 }
@@ -86,7 +97,7 @@ GitHub.prototype.getOrCreateRepo = function(name, successCallback, errorCallback
 GitHub.prototype.forkRepo = function(owner, name, successCallback, errorCallback)
 {
 	$.ajax("https://api.github.com/repos/" + owner + "/" + name + "/forks", 
-		{headers: {"Authorization": "token " + this.token},
+		{data: {"access_token": this.token},
 		 type: "POST",
 		 })
 		 .success(function(r)
@@ -100,9 +111,8 @@ GitHub.prototype.forkRepo = function(owner, name, successCallback, errorCallback
 
 GitHub.prototype.createFile = function(repo, path, successCallback, errorCallback)
 {
-	$.ajax("https://api.github.com/repos/"+ this.user +"/"+ repo + "/contents/" + path, 
+	$.ajax("https://api.github.com/repos/"+ this.user.login +"/"+ repo + "/contents/" + path + "?access_token=" + this.token, 
 		{
-			headers: {"Authorization": "token " + this.token},
 			type: "PUT",
 			data: 
 			JSON.stringify({
@@ -120,9 +130,9 @@ GitHub.prototype.createFile = function(repo, path, successCallback, errorCallbac
 
 GitHub.prototype.getFile = function(repo, path, successCallback, errorCallback)
 {
-	$.ajax("https://api.github.com/repos/"+ this.user +"/"+ repo + "/contents/" + path, 
+	$.ajax("https://api.github.com/repos/"+ this.user.login +"/"+ repo + "/contents/" + path, 
 		{
-			headers: {"Authorization": "token " + this.token},
+			data: {"access_token": this.token},
 			type: "GET",
 			cache: false
 		})
@@ -151,9 +161,8 @@ GitHub.prototype.listFiles = function(repo, directory, successCallback, errorCal
 
 GitHub.prototype.commitChange = function(originalFile, newContent, message, successCallback, errorCallback)
 {
-	$.ajax(originalFile.url, 
-		{headers: {"Authorization": "token " + this.token},
-		 type: "PUT",
+	$.ajax(originalFile.url + "&access_token=" + this.token, 
+		{type: "PUT",
 		 data: JSON.stringify(
 		 {
 			message: message,

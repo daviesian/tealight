@@ -41,14 +41,27 @@ $(function()
 			    dataType: "json"})
 			.success(function(r)
 			{
-				document.cookie = "tealight-token=" + t.token;
-				console.log(r);
+				document.cookie = "tealight-token=" + r.access_token;
+				document.location.href = document.location.href.split("?")[0];
+				//console.log(r);
 			}).error(function(e)
 			{
 				console.error(e);
 			});
 		        
 	}
+	
+	if (getCookie("tealight-token"))
+	{
+		GitHub.getUser(getCookie("tealight-token"), function(u)
+		{
+			console.log("User:", u);
+			github = new GitHub(u, getCookie("tealight-token"));
+			displayGithubStatus();
+		}, ajaxError);
+	}
+	
+	displayGithubStatus();
 	
 	codeMirror = CodeMirror($("#code-editor")[0],
 	{
@@ -134,7 +147,7 @@ function modalError(title, message)
 	$('#modal-error .modal-body').html(message);
 	$('#modal-error').modal("show");
 }
-
+/*
 function ensureGithubAvailable()
 {
 	if (github)
@@ -154,13 +167,13 @@ function ensureGithubAvailable()
 							 backdrop: "static"});
 	}
 }
-
+*/
 function displayGithubStatus()
 {
 	if(github)
 	{
 		$("#header-github-login").hide();
-		$(".current-github-user").html("<a href=\"https://github.com/" + github.user + "\">" + github.user + "</a>");
+		$(".current-github-user").html("<a href=\"" + github.user.url + "\">" + github.user.login + "</a>");
 		$("#header-github-user").show();
 	}
 	else
@@ -169,7 +182,7 @@ function displayGithubStatus()
 		$("#header-github-login").show();
 	}
 }
-
+/*
 function githubTokenToCookie(user, password, successCallback, errorCallback)
 {
 	GitHub.getUserToken(user, password, function(t) 
@@ -195,6 +208,7 @@ function githubFromCookie()
 	else
 		return null;
 }
+*/
 
 function ajaxError(x)
 {
@@ -249,7 +263,6 @@ function githubLogin(username, password)
 function githubLogout()
 {
 	github = null;
-	document.cookie = 'tealight-user=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 	document.cookie = 'tealight-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 	displayGithubStatus();
 }
