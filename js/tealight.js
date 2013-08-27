@@ -40,11 +40,19 @@ $(function()
 			    dataType: "json"})
 			.success(function(r)
 			{
-				document.cookie = "tealight-token=" + r.access_token;
-				document.location.href = document.location.href.split("?")[0];
+				if (r.access_token)
+				{
+					document.cookie = "tealight-token=" + r.access_token;
+					document.location.href = document.location.href.split("?")[0];
+				}
+				else
+				{	
+					modalError("Login error", "The tealight auth server returned the following error: <code>" + r.error + "</code>");
+				}
 			}).error(function(e)
 			{
 				console.error(e);
+				
 			});
 	} 
 	else if (getCookie("tealight-token"))
@@ -54,7 +62,11 @@ $(function()
 		{
 			github = new GitHub(u, getCookie("tealight-token"));
 			displayGithubStatus();
-		}, ajaxError);
+		}, function(e)
+		{
+			modalError("Login failed", "Github returned the following error message during login: <code>" + e.responseJSON.message + "</code>");
+			ajaxError(e);
+		});
 	} 
 	else
 	{
