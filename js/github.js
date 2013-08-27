@@ -26,7 +26,7 @@ GitHub.prototype.getRepo = function(name, successCallback, errorCallback)
 GitHub.prototype.forkRepo = function(owner, name, successCallback, errorCallback)
 {
 	$.ajax("https://api.github.com/repos/" + owner + "/" + name + "/forks", 
-		{data: {"access_token": this.token},
+		{headers: {"Authorization": "token " + this.token},
 		 type: "POST",
 		 })
 		 .success(function(r)

@@ -61,6 +61,7 @@ $(function()
 		GitHub.getUser(getCookie("tealight-token"), function(u)
 		{
 			github = new GitHub(u, getCookie("tealight-token"));
+			ensureTealightFilesRepo();
 			displayGithubStatus();
 		}, function(e)
 		{
