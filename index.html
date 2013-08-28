@@ -1,0 +1,286 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Tealight</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	
+	<!-- Deault CodeMirror style -->
+	<link rel="stylesheet" href="css/codemirror/codemirror.css">
+	<link rel="stylesheet" href="css/codemirror/theme/solarized.css">
+
+    <!-- Custom styles for this template -->
+    <link href="css/tealight.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/bootstrap/html5shiv.js"></script>
+      <script src="js/bootstrap/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <!-- HEADER -->
+	<div class="navbar navbar-inverse navbar-fixed-top">
+	  <div class="container">
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		  </button>
+		  <a class="navbar-brand" href="#">TeaLight</a>
+		</div>
+		<div class="navbar-collapse collapse">
+		  <ul id="navtabs" class="nav navbar-nav">
+			<li class="active"><a href="#home" data-toggle="tab" data-github-required="false">Home</a></li>
+			<li><a href="#about" data-toggle="tab" data-github-required="false">About</a></li>
+			<li><a href="#code" data-toggle="tab" data-tealight-mode="logo" data-github-required="true">Logo</a></li>
+			<li><a href="#code" data-toggle="tab" data-tealight-mode="robot" data-github-required="true">Robot</a></li>
+			<li><a href="#code" data-toggle="tab" data-tealight-mode="art" data-github-required="true">Art</a></li>
+			<li class="dropdown">
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+			  <ul class="dropdown-menu">
+				<li><a href="#">Action</a></li>
+				<li><a href="#">Another action</a></li>
+				<li><a href="#">Something else here</a></li>
+				<li class="divider"></li>
+				<li class="dropdown-header">Nav header</li>
+				<li><a href="#">Separated link</a></li>
+				<li><a href="#">One more separated link</a></li>
+			  </ul>
+			</li>
+		  </ul>
+		  
+		  <div id="header-github-login" class="navbar-right">
+			  <button type="button" class="btn btn-success navbar-btn navbar-right login-button" data-loading-text="Redirecting...">Login with Github</button>
+		  </div>
+		  <div id="header-github-user" class="navbar-right">
+			  <p class="navbar-text">
+				Logged in as <span class="current-github-user"></span> 
+			  </p>
+			  <button type="button" class="btn btn-danger navbar-btn navbar-right logout-button">Logout</button>
+		  </div>
+		</div><!--/.navbar-collapse -->
+	  </div>
+	</div><!--/.navbar-->
+
+	<!-- CONTENT -->
+    <div id="wrap">
+		<div class="tab-content">
+		  <div class="tab-pane active" id="home">
+		    <!-- HOME TAB -->
+			<!-- Main jumbotron for a primary marketing message or call to action -->
+			<div class="jumbotron">
+			  <div class="container">
+				<h1>Welcome to Tealight!</h1>
+				<hr>
+				<div class="col-lg-6">
+				<p>This is a Computer Science teaching tool.</p>
+				<p><button class="btn btn-primary btn-lg choose-tab" data-target-tab="about">Learn more &raquo;</button></p>
+				</div>
+				<div id="github-login-prompt" class="col-lg-6">
+					<p>To get started, please login with Github</p>
+					<p><button class="btn btn-success btn-lg login-button" data-loading-text="Redirecting...">Login with Github &raquo;</button></p>
+				</div>
+			  </div>
+			</div>
+
+			<div class="container">
+
+
+			  <!-- Example row of columns -->
+			  <div class="row">
+				<div class="col-lg-4">
+				  <h2>Logo Mode</h2>
+				  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+				  <p><button class="btn btn-default choose-tealight-mode" data-target-tealight-mode="logo">Logo Mode &raquo;</button></p>
+			   </div>
+				<div class="col-lg-4">
+				  <h2>Robot Mode</h2>
+				  <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+				  <p><button class="btn btn-default choose-tealight-mode" data-target-tealight-mode="robot">Robot Mode &raquo;</button></p>
+			   </div>
+				<div class="col-lg-4">
+				  <h2>Art Mode</h2>
+				  <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+				  <p><button class="btn btn-default choose-tealight-mode" data-target-tealight-mode="art">Art Mode &raquo;</button></p>
+				</div>
+			  </div>
+
+			  <hr>
+
+			</div> <!-- /container -->
+		  
+		  </div>
+		  <div class="tab-pane" id="about">
+			  <!-- ABOUT TAB -->
+			  <header class="jumbotron subhead" id="overview">
+				  <div class="container">
+					<h1>About Tealight</h1>
+					<p class="lead">Tealight is for teaching. <br/>
+					                Tealight provides a browser-based python development environment. <br/>
+									Tealight uses Github for storage and version control.
+					</p>
+				  </div>
+		      </header>
+			  <div class="container">
+				<div class="row">
+					<div class="col-lg-3">
+					<ul class="nav tealight-sidenav">
+						<li class="active"><a href="#overview">Overview</a></li>
+						<li><a href="#overview">Teaching</a></li>
+						<li><a href="#overview">Technology</a></li>
+					</ul>
+					</div>
+					<div class="col-lg-9">
+						<section id="overview">
+							<div class="page-header">
+								<h1>Overview</h1>
+							</div>
+							<p>Here is an overview of Tealight</p>
+						</section>
+						<section id="teaching">
+							<div class="page-header">
+								<h1>Teaching</h1>
+							</div>
+							<p>Tealight is based on the RoboC teaching language.</p>
+						</section>
+						<section id="technology">
+							<div class="page-header">
+								<h1>Technology</h1>
+							</div>
+							<p>Tealight uses <a href="skulpt.org">Skulpt</a> for client-side Python execution.</p>
+						</section>
+					</div>
+				</div>
+				<!--
+				<div class="sidebar-nav">SIDEBAR</div>
+						<section id="topic1">
+							<div class="page-header">
+								<h1>Further Information</h1>
+							</div>
+							<h2 id="headings">Technologies</h2>
+							<p>Tealight uses <a href="skulpt.org">Skulpt</a> for client-side Python execution.</p>
+						</section>
+						<section id="topic2">
+						</section>
+				Here is some info about Tealight.-->
+			  </div>
+		  </div>
+		  <div class="tab-pane" id="code">
+			  <!-- CODE TAB -->
+				<div class="col-lg-6">
+				  <div id="code-panel">
+				  <div class="btn-group" id="code-header">
+					<button class="btn btn-default pull-right dropdown-toggle" data-toggle="dropdown" type="button"><span id="current-code-file">Loading...</span> <b class="caret"></b></button>
+					  <ul id="file-list" class="dropdown-menu pull-right" role="menu">
+					  </ul>
+					 
+					<span class="lead mode-title"></span>
+				  </div>
+				  <div id="code-editor"></div>
+				  <div id="code-buttons">
+					  <button id="run-code" class="btn btn-success" type="button">Run</button>
+					  <button id="stop-code" class="btn btn-danger" type="button" disabled>Stop</button>
+				  </div>
+				  </div>
+				  <pre id="code-output"></pre>
+			  </div>
+			<div class="col-lg-6 col-lg-offset-6">
+			  <div id="canvasContainer">			  
+				<canvas id="canvas" width="20" height="20"></canvas>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		
+	</div> <!--/content-->
+	
+	<!-- FOOTER -->
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted credit">Tealight &copy 2013 <a href="http://github.com/LeszekSwirski">Leszek Świrski</a> and <a href="http://github.com/daviesian">Ian Davies</a>.</p>
+      </div>
+    </div>
+	
+	
+	<!-- Modal Login-->
+  <div class="modal fade" id="modal-login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+			<form class="form-horizontal" role="form">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Login required</h4>
+        </div>
+        <div class="modal-body">
+			To get started, please login with Github.
+		</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-success login-button" data-dismiss="modal">Login &raquo;</button>
+        </div>
+      </div><!-- /.modal-content -->
+			</form>
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  
+	<!-- Modal Error -->
+  <div class="modal fade" id="modal-error" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+			<form class="form-horizontal" role="form">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Error</h4>
+        </div>
+        <div class="modal-body">
+			An error occurred.
+		</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">OK</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  
+	<!-- Modal Loading -->
+  <div class="modal fade" id="modal-tealight-dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+			<form class="form-horizontal" role="form">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Waiting</h4>
+        </div>
+        <div class="modal-body">
+			Waiting for background task to complete...
+		</div>
+        <div class="modal-footer">
+
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="js/bootstrap/bootstrap.js"></script>
+	<script src="js/codemirror/codemirror.js"></script>
+	<script src="js/codemirror/modes/python.js"></script>
+	<script src="js/github.js"></script>
+	<script src="js/github_application.js"></script>
+	<script src="js/tealight.js"></script>
+	<script src="js/logo.js"></script>
+	
+  </body>
+</html>
