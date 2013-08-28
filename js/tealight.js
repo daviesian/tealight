@@ -100,6 +100,7 @@ $(function()
 
 $("body").on("click", ".login-button", function(e)
 {
+	$(".login-button").button("loading");
 	document.location.href="https://github.com/login/oauth/authorize?scope=public_repo&client_id=" + github_client_id;
 });
 
