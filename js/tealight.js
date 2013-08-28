@@ -29,7 +29,11 @@ $(function()
 {
 	// Document ready
 	
-	
+	if (typeof tealight_auth_server === "undefined")
+	{
+		modalError("Server not configured", "The tealight authentication server has not been configured for this deployment of tealight. Please follow the instructions in <code><a href=\"js/github_application.TEMPLATE.js\">js/github_application.TEMPLATE.js</a></code> and then refresh this page.", true);
+		return;
+	}
 	
 	if ("code" in urlParams)
 	{
@@ -47,6 +51,7 @@ $(function()
 				}
 				else
 				{	
+					clearTealightCookies();
 					modalError("Login error", "The tealight auth server returned the following error: <code>" + r.error + "</code>");
 				}
 			}).error(function(e)
@@ -65,7 +70,8 @@ $(function()
 			displayGithubStatus();
 		}, function(e)
 		{
-			modalError("Login failed", "Github returned the following error message during login: <code>" + e.responseJSON.message + "</code>");
+			clearTealightCookies();
+			modalError("Login failed", "Github returned the following error message during login: <p><code>" + e.responseJSON.message + "</code>. <p>Your access token may have expired, in which case refreshing this page should fix the problem.");
 			ajaxError(e);
 		});
 	} 
@@ -164,11 +170,22 @@ $("body").on("file-loaded", function(e)
 	$("#current-code-file").html(currentFile.name);
 });
 
-function modalError(title, message)
+function modalError(title, message, preventDismiss)
 {
 	$('#modal-error .modal-title').html(title);
 	$('#modal-error .modal-body').html(message);
-	$('#modal-error').modal("show");
+	
+	if (preventDismiss)
+	{
+		$('#modal-error .modal-footer button').hide();
+		$('#modal-error').modal({show: true,
+								 backdrop: "static"});
+	}
+	else
+	{
+		$('#modal-error .modal-footer button').show();
+		$('#modal-error').modal("show");
+	}
 }
 /*
 function ensureGithubAvailable()
@@ -244,8 +261,13 @@ function getCookie(c_name)
 function githubLogout()
 {
 	github = null;
-	document.cookie = 'tealight-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	clearTealightCookies();
 	displayGithubStatus();
+}
+
+function clearTealightCookies()
+{
+	document.cookie = 'tealight-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
 function ensureTealightFilesRepo(successCallback, errorCallback)
