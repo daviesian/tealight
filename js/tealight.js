@@ -341,7 +341,7 @@ function loadModes(successCallback)
 
 function chooseMode(mode)
 {
-
+	codeMode = mode;
 	$("#current-mode").html(mode.capitalize() + " Mode");
 	loadTealightFilesFromRepo(mode);
 
