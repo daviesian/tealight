@@ -6,7 +6,6 @@ var codeMode = null;
 
 var tealightSkulptModuleCache = {};
 
-
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
@@ -114,10 +113,12 @@ $("body").on("click", ".choose-tab", function(e)
 	$('#navtabs a[href="#' + $(e.target).data("targetTab") + '"]').tab("show")
 });
 
+/*
 $("body").on("click", ".choose-tealight-mode", function(e)
 {
 	$('#navtabs a[data-tealight-mode="' + $(e.target).data("targetTealightMode") + '"]').tab("show")
 });
+*/
 
 $("body").on("show.bs.tab", "a[data-toggle='tab']", function(e)
 {
@@ -126,17 +127,18 @@ $("body").on("show.bs.tab", "a[data-toggle='tab']", function(e)
 		$("#modal-login").modal("show");
 		return false;
 	}
+	
 	var previousTab = $(e.relatedTarget).attr("href");
 	var newTab = $(e.target).attr("href");
 	console.log("Leaving tab", previousTab, "entering tab", newTab);
 	
-	if (newTab == "#code")
-	{
-		codeMode = $(e.target).data("tealightMode");
-		console.log("Code mode", codeMode);
-		$(".mode-title").html(codeMode.capitalize() + " Mode");
-		loadTealightFilesFromRepo(codeMode);
-	}
+});
+
+$("body").on("shown.bs.tab", "a[data-toggle='tab'][href='#code']", function(e)
+{
+	
+	console.log("Entering code tab - refreshing codeMirror");
+	codeMirror.refresh();
 });
 
 $("body").on("click", "#run-code", function(e)
@@ -278,8 +280,7 @@ function ensureTealightFilesRepo(successCallback, errorCallback)
 	{
 		console.log("User already has tealight-files repo.");
 		$("body").trigger("tealight-files-repo-confirmed");
-		if (successCallback)
-			successCalback();
+		loadModes(successCallback);
 	}, function(e)
 	{
 		// If it doesn't, fork from tealight/tealight-files
@@ -292,8 +293,7 @@ function ensureTealightFilesRepo(successCallback, errorCallback)
 			{
 				console.log("tealight-files repo forked successfully.");
 				$("body").trigger("tealight-files-repo-confirmed");
-				if (successCallback)
-					successCallback();
+				loadModes(successCallback);
 			}, function(ev)
 			{
 				console.error("Timeout while waiting for tealight-files fork to become available");
@@ -307,6 +307,44 @@ function ensureTealightFilesRepo(successCallback, errorCallback)
 			modalError(e.responseJSON.message);
 		});
 	});
+}
+
+function loadModes(successCallback)
+{
+	github.listFiles("tealight-files", "", function(fs)
+	{
+		var loadedFirstMode = false;
+		for(var f in fs)
+		{
+			if (fs[f].type != "dir")
+				continue;
+			
+			$("#mode-list").append($('<li/>').append($('<a/>').attr("href", "#")
+													  .html(fs[f].name.capitalize())
+													  .data("mode", fs[f].name)
+													  .click(function(e)
+				{
+					//console.log("Clicked mode", $(e.target).data("mode"));
+					//loadFile($(e.target).data("mode"));
+					chooseMode($(e.target).data("mode"));
+				})));
+			
+			console.log("Discovered mode:", fs[f].name);
+		}
+		
+		$("#mode-list li:first a").trigger("click")
+		
+		if (successCallback)
+			successCallback();
+	}, ajaxError);
+}
+
+function chooseMode(mode)
+{
+
+	$("#current-mode").html(mode.capitalize() + " Mode");
+	loadTealightFilesFromRepo(mode);
+
 }
 
 function modalDialog(title, message)
