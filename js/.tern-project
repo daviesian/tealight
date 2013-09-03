@@ -1,0 +1,11 @@
+{
+  "libs": [
+    "browser",
+    "jquery"
+  ],
+  "loadEagerly": [
+    "*.js",
+    "codemirror/codemirror.js",
+    "skulpt/skulpt.js"
+  ]
+}
