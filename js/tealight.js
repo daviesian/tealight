@@ -86,12 +86,68 @@ $(function()
 	}
 	
 	// Init code editor.
-	codeMirror = CodeMirror($("#code-editor")[0],
-	{
+	codeMirror = CodeMirror($("#code-editor")[0], {
 		mode: "python",
 		lineNumbers: true,
-		theme: "solarized dark"
-	});
+		theme: "default",
+        tabSize: 4,
+        indentUnit: 4,
+        extraKeys: {
+            "Tab": function(cm){
+                if (cm.somethingSelected()) return CodeMirror.Pass;
+
+                var pos = cm.getCursor();
+                var line_prefix = cm.getRange({line:pos.line, ch:0}, pos);       
+                
+                if (line_prefix.match(/^ *$/)) {
+                    // Add spaces up to indentation column if not aligned, or one level of indentation
+                    var chars_from_indent = pos.ch % cm.options.indentUnit;
+                    var chars_to_indent = cm.options.indentUnit - chars_from_indent;
+                    var chars_to_add = chars_to_indent == 0 ?
+                                         cm.options.indentUnit :
+                                         chars_to_indent;
+                
+                    var spaces = Array(chars_to_add + 1).join(" ");
+                    cm.replaceSelection(spaces, "end", "+input");
+                } else {
+                    // Add indentUnit spaces
+                    var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
+                    cm.replaceSelection(spaces, "end", "+input");
+                }
+            },
+            "Backspace": function(cm) {
+                // Check if not deleting a selection
+                if (cm.somethingSelected()) return CodeMirror.Pass;
+                
+                var pos = cm.getCursor();
+                
+                // Check if not at start of line
+                if (pos.ch === 0) return CodeMirror.Pass;
+                
+                var line_prefix = cm.getRange({line:pos.line, ch:0}, pos);
+
+                // Check if we are deleting spaces
+                if (line_prefix[pos.ch-1] !== " ") return CodeMirror.Pass;
+
+                // Check if preceding characters are all spaces         
+                if (line_prefix.match(/^ *$/)) {
+                    // Delete up to indentation column if not aligned, or one level of indentation
+                    var chars_from_indent = pos.ch % cm.options.indentUnit;
+                    var chars_to_delete = chars_from_indent == 0 ?
+                                            cm.options.indentUnit :
+                                            chars_from_indent;
+                    cm.replaceRange("", {line:pos.line, ch:pos.ch-chars_to_delete}, pos);
+                } else {
+                    // Reverse find first character that isn't a space, up to indentUnit spaces
+                    var ch = pos.ch - 1;
+                    while (ch > pos.ch - cm.options.indentUnit && line_prefix[ch-1] === " ") {
+                        --ch;
+                    }
+                    cm.replaceRange("", {line:pos.line, ch:ch}, pos);
+                }
+            }
+        }
+    });
 	
 });
 
