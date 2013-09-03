@@ -322,6 +322,7 @@ function githubLogout()
     github = null;
     clearTealightCookies();
     displayGithubStatus();
+    $('#navtabs a[href="#home"]').tab("show")
 }
 
 function clearTealightCookies()
